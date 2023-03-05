@@ -1,0 +1,103 @@
+﻿@model SocialNet.Core.Application.ViewModels.HomeVm
+@using Microsoft.AspNetCore.Http;
+@using SocialNet.Core.Application.Helpers;
+@using SocialNet.Core.Application.ViewModels;
+@inject IHttpContextAccessor _httpContext;
+
+
+@{
+  ViewData["Title"] = "Home";
+  var Posts = Model.Posts;
+  UserVm user = _httpContext.HttpContext.Session.Get<UserVm>("user");
+}
+
+<section>
+  <div class="col-sm-12">
+    <form asp-action="Create" asp-controller="Post" enctype="multipart/form-data">
+      <div class="card text-white bg-dark mb-3 mx-auto" style="max-width: 30rem;">
+        <div class="card-header">
+          <img src="@user.Image" class="img-fluid rounded-circle me-2" style="width: 50px; height: 50px;" />
+          <span class="text-bg-dark">@user.UserName</span>
+        </div>
+        <div class="card-body">
+          <div class="form-floating mb-3">
+            <textarea asp-for="@Model.Content" class="form-control" style="height: 60px"></textarea>
+            <label class="text-dark" asp-for="@Model.Content">What are you thinking?</label>
+          </div>
+          <div class="mb-3">
+            <input type="file" asp-for="@Model.ImageFile" class="d-none" id="image" />         
+            <button type="button" class="btn btn-outline-primary float-end" onclick="document.getElementById('image').click()"><i class="bi bi-camera-fill"></i> Add Image</button>
+          </div>
+        </div>
+        <div class="card-footer">
+          <button type="submit" class="btn btn-primary float-end"><i class="bi bi-send-plus-fill"></i> Post</button>
+        </div>
+      </div>
+    </form>
+  </div>
+  @if (Posts.Count() > 0) {
+    @foreach (var post in Posts) {
+      <div class="col-sm-12">
+        <div class="card text-white bg-dark mb-3 mx-auto" style="max-width: 30rem;">
+          <div class="card-header d-flex flex-row align-items-baseline justify-content-between">
+            <div class="float-start">
+              <img src="@post.UserImg" class="img-fluid rounded-circle me-2" style="width: 50px; height: 50px;" />
+              <span class="text-bg-dark">@post.UserName</span>
+            </div>
+            <span class="float-end">@post.CreatedAt</span>
+          </div>
+          <div class="card-body">
+            <p class="card-text">@post.Content</p>          
+              @if (post.Image != null) {
+                <div>
+                  <img src="@post.Image" class="img-fluid" />
+                </div>
+              }
+          </div>
+          <div class="card-footer">
+            <div class="col-sm-12">
+              <div class="d-flex flex-row align-baseline justify-content-between">
+                <div class="d-flex flex-row gap-3">
+                  <a asp-action="Edit" asp-controller="Post" asp-route-id="@post.Id" class="btn btn-outline-info mb-3"><i class="bi bi-pencil-square"></i></a>
+                  <a asp-action="Delete" asp-controller="Post" asp-route-id="@post.Id" class="btn btn-outline-danger mb-3"><i class="bi bi-trash-fill"></i></a>
+                </div>
+                <button type="button" class="btn btn-primary mb-3" onclick="showComments('@post.Id')"><i class="bi bi-chat-text"></i> Comments</button>
+              </div>
+              <div id="@post.Id" style="display: none">
+                <form asp-action="Create" asp-controller="Comment" class="mb-3 gap-3 d-flex flex-row justify-content-between align-baseline" style="margin: 0.1rem">
+                  <div class="mb-3 w-100">
+                    <input type="text" asp-for="@post.Comment" class="form-control" name="comment" required placeholder="Conmment Here"/>
+                  </div>
+                  <div>
+                    <input type="hidden" asp-for="@post.Id" value="@post.Id" name="postId" />
+                    <button type="submit" class="btn btn-primary">Comment</button>
+                  </div>
+                </form>
+                @if (post.Comments != null) {
+                  @foreach (var coment in post.Comments) {
+                    <div class="card text-dark bg-white mb-3 mx-auto" style="max-width: 30rem;">
+                      <div class="card-header">
+                        <img src="@coment.UserImg" class="img-fluid rounded-circle" style="width: 50px; height: 50px;" />
+                        <span class="text-bg-white">@coment.UserName</span>
+                      </div>
+                      <div class="card-body">
+                        <p class="card-text">@coment.Content</p>
+                      </div>
+                    </div>
+                  }
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</section>
+
+<script>
+  function showComments(id) {
+      var x = document.getElementById(id);
+      x.style.display === "block" ? x.style.display = "none" : x.style.display = "block";
+  }
+</script>

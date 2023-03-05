@@ -1,0 +1,59 @@
+@model SocialNet.Core.Application.ViewModels.FriendVm
+
+@{
+  ViewData["Title"] = "Home";
+  var Users = Model.Users;
+}
+<form asp-action="SearchUser" asp-controller="Friend" class="mb-3">
+  <div class="row" style="margin: 0.1rem">
+    <div class="form-control mb-3">
+      <label class="form-label">Search</label>
+      <input type="text" asp-for="@Model.UserName" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary float-end">Search</button>
+  </div>
+</form>
+<table class="table">
+  <thead>
+    <tr>
+      <th>
+        Username
+      </th>
+      <th>
+        Name
+      </th>
+      <th>
+        Last Name
+      </th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    @if(Users.Count() > 0)
+    {
+      foreach (var user in Users)
+      {
+        <tr>
+          <td>
+            @user.UserName
+          </td>
+          <td>
+            @user.Name
+          </td>
+          <td>
+            @user.LastName
+          </td>
+          <td>
+            <a asp-action="AddFriend" asp-controller="Friend" c asp-route-id="@user.Id" class="btn-sm btn-outline-success">Add Friend</a>
+          </td>
+        </tr>
+      }
+    }else{
+      <tr>
+        <td colspan="4" class="text-danger">
+          The user you are looking for does not exist
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>

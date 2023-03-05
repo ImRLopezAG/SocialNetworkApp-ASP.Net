@@ -1,0 +1,29 @@
+﻿@model SocialNet.Core.Application.ViewModels.LoginVm;
+@{
+  ViewData["Title"] = "Login";
+}
+
+<div class="row">
+  <div class="col-md-4 mx-auto">
+    <h2>Login</h2>
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = ViewBag.Message ?? "text-danger mb-3" })
+    <form asp-controller="User" asp-action="Index">
+      <div class="form-group">
+        <label asp-for="UserName">UserName</label>
+        <input asp-for="UserName" class="form-control" />
+      </div>
+      <div class="form-group mb-3">
+        <label asp-for="Password">Password</label>
+        <input asp-for="Password" class="form-control" />
+      </div>
+      <div class="form-group">
+        <input type="submit" value="Login" class="btn btn-outline-success float-end" />
+        <a asp-controller="User" asp-action="Create" class="btn btn-primary float-start">Register as a new user</a>
+      </div>
+      <div class="form-group">
+        <a asp-controller="User" asp-action="ForgotPassword" class="btn btn-link mx-auto">Forgot password?</a>
+      </div>
+    </form>
+  </div>
+</div>

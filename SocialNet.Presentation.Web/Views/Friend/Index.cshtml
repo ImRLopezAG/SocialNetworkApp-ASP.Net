@@ -1,0 +1,110 @@
+@model SocialNet.Core.Application.ViewModels.FriendVm
+
+@{
+  ViewData["Title"] = "Friends";
+  var Posts = Model.Posts;
+  var Users = Model.Users;
+}
+
+<section class="row">
+  <div class="col-sm-4">
+    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+    <form asp-action="AddFriend" asp-controller="Friend" class="mb-3">
+      <div class="row" style="margin: 0.1rem">
+        <div class="form-control mb-3">
+          <label class="form-label">Search</label>
+          <input type="text" asp-for="@Model.UserName" class="form-control" />
+          <span asp-validation-for="@Model.UserName" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary float-end">Search</button>
+      </div>
+    </form>
+    @if (Users.Count() > 0) {
+      <h3>My Friends</h3>
+      @foreach (var user in Model.Users) {
+        <div class="card text-white bg-dark mb-3 " style="max-width: 22rem;">
+          <div class="card-header d-flex flex-row  align-items-center justify-content-between gap-1">
+            <div class="d-flex flex-row align-items-center gap-1">
+              <img src="@user.Image" class="img-fluid rounded-circle" style="width: 50px; height: 50px;" alt="@user.Name @user.LastName" />
+              <div class="row ms-2 w-75">
+                <span class="px-0">@user.UserName</span>
+                <span class="text-muted px-0 text-truncate">@user.Name @user.LastName</span>
+              </div>
+            </div>
+            <div class="float-end">
+              <a asp-action="Delete" asp-controller="Friend" asp-route-id="@user.Id" class="btn btn-danger mx-auto"
+                 onclick="return confirm('Are you sure you want to delete this friend: @user.UserName?');">
+                <i class="bi bi-trash-fill"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+    }
+  </div>
+  <div class="col-8">
+    @if (Posts.Count() > 0) {
+      @foreach (var post in Posts) {
+        <div class="card text-white bg-dark mb-3 mx-auto" style="max-width: 30rem;">
+          <div class="card-header d-flex flex-row align-items-baseline justify-content-between">
+            <div class="float-start">
+              <img src="@post.UserImg" class="img-fluid rounded-circle me-2" style="width: 50px; height: 50px;" />
+              <span class="text-bg-dark">@post.UserName</span>
+            </div>
+            <span class="float-end">@post.CreatedAt</span>
+          </div>
+          <div class="card-body">
+            <p class="card-text">@post.Content</p>
+            @if (post.Image != null) {
+              <div>
+                <img src="@post.Image" class="img-fluid" />
+              </div>
+            }
+          </div>
+          <div class="card-footer">
+            <div class="col-sm-12">
+              <div class="d-flex flex-row align-baseline justify-content-end">
+                <button type="button" class="btn btn-primary mb-3" onclick="showComments('@post.Id')">
+                  <i class="bi bi-chat-text"></i> Comments
+                </button>
+              </div>
+              <div id="@post.Id" style="display: none">
+                <form asp-action="Create" asp-controller="Comment"
+                      class="mb-3 gap-3 d-flex flex-row justify-content-between align-baseline" style="margin: 0.1rem">
+                  <div class="mb-3 w-100">
+                    <input type="text" asp-for="@post.Comment" class="form-control" name="comment" required
+                           placeholder="Conmment Here" />
+                  </div>
+                  <div>
+                    <input type="hidden" asp-for="@post.Id" value="@post.Id" name="postId" />
+                    <button type="submit" class="btn btn-primary">Comment</button>
+                  </div>
+                </form>
+                @if (post.Comments != null) {
+                  @foreach (var coment in post.Comments) {
+                    <div class="card text-dark bg-white mb-3 mx-auto" style="max-width: 30rem;">
+                      <div class="card-header">
+                        <img src="@coment.UserImg" class="img-fluid rounded-circle" style="width: 50px; height: 50px;" />
+                        <span class="text-bg-white">@coment.UserName</span>
+                      </div>
+                      <div class="card-body">
+                        <p class="card-text">@coment.Content</p>
+                      </div>
+                    </div>
+                  }
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</section>
+
+<script>
+  function showComments(id) {
+    var x = document.getElementById(id);
+    x.style.display === "block" ? x.style.display = "none" : x.style.display = "block";
+  }
+</script>

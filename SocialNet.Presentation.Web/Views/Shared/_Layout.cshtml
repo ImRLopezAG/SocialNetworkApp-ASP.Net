@@ -1,0 +1,105 @@
+﻿@using Microsoft.AspNetCore.Http;
+@using SocialNet.Core.Application.Helpers;
+@using SocialNet.Core.Application.ViewModels;
+@inject IHttpContextAccessor _httpContext;
+@{
+  UserVm user = _httpContext.HttpContext.Session.Get<UserVm>("user");
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@ViewData["Title"] - Social NetWork App</title>
+  <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+  <link rel="stylesheet" href="~/SocialNet.Presentation.Web.styles.css" asp-append-version="true" />
+</head>
+
+<body>
+  <header>
+    <nav class="navbar navbar-dark bg-dark mb-4">
+      <div class="container-fluid">
+        <a class="navbar-brand" asp-action="Index" asp-controller="@(user!=null? "Home":"User")">SocialNet</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+          aria-controls="offcanvasNavbar">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+          <div class="offcanvas-header bg-dark text-white">
+            @if (user != null)
+            {
+              <div class="d-flex flex-row gap-3 align-items-center">
+                <img src="@user.Image" class="rounded-circle" width="50" height="50" />
+                <span class="text-white"><i class="bi bi-at"></i> @user.UserName</span>
+              </div>
+            }
+            else
+            {
+              @("SocialNet App")
+            }
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body bg-dark">
+            @if (user != null)
+            {
+              <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                <li class="nav-item">
+                  <a class="nav-link active" aria-current="page" asp-action="Index" asp-controller="Home">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" asp-action="Index" asp-controller="Friend">Friends</a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                    Functionalities
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a class="dropdown-item" asp-action="Edit" asp-controller="User" asp-route-id="@user.Id">
+                        Edit User
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            }
+            <div class="d-flex">
+              @if (user != null)
+              {
+                <a class="btn btn-outline-danger mt-3" asp-action="Logout" asp-controller="User">Logout</a>
+              }
+              else
+              {
+                <div class="grid gap-3">
+                  <a class="btn btn-outline-primary " asp-action="Index" asp-controller="User">Login</a>
+                  <a class="btn btn-outline-primary" asp-action="Create" asp-controller="User">Register</a>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <div class="container">
+    <main role="main" class="pb-3">
+      @RenderBody()
+    </main>
+  </div>
+
+  <footer class="border-top footer text-muted">
+    <div class="container">
+      &copy; 2023 - Social NetApp - <a href="https://imrlopez.dev" target="_blank"><i
+          class="bi bi-github"></i>PortFolio</a>
+    </div>
+  </footer>
+  <script src="~/lib/jquery/dist/jquery.min.js"></script>
+  <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="~/js/site.js" asp-append-version="true"></script>
+  @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

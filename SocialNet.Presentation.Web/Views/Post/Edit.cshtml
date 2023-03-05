@@ -1,0 +1,38 @@
+@model SocialNet.Core.Application.ViewModels.SaveVm.SavePostVm
+
+@using Microsoft.AspNetCore.Http;
+@using SocialNet.Core.Application.Helpers;
+@using SocialNet.Core.Application.ViewModels;
+@inject IHttpContextAccessor _httpContext;
+
+
+@{
+  ViewData["Title"] = "Editing Post";
+  UserVm user = _httpContext.HttpContext.Session.Get<UserVm>("user");
+}
+
+<section>
+  <div class="col-sm-12">
+    <form asp-action="Edit" asp-controller="Post" enctype="multipart/form-data">
+      <div class="card text-white bg-dark mb-3 mx-auto" style="max-width: 30rem;">
+        <div class="card-header">
+          <img src="@user.Image" class="img-fluid rounded-circle me-2" style="width: 50px; height: 50px;" />
+          <span class="text-bg-dark">@user.UserName</span>
+        </div>
+        <div class="card-body">
+          <div class="form-floating mb-3">
+            <textarea asp-for="@Model.Content" class="form-control" style="height: 60px"></textarea>
+            <label class="text-dark" asp-for="@Model.Content">What are you thinking?</label>
+          </div>
+          <div class="mb-3">
+            <input type="file" asp-for="@Model.ImageFile" class="d-none" id="image" />
+            <button type="button" class="btn btn-outline-primary float-end" onclick="document.getElementById('image').click()"><i class="bi bi-camera-fill"></i> Add Image</button>
+          </div>
+        </div>
+        <div class="card-footer">
+          <button type="submit" class="btn btn-primary float-end"><i class="bi bi-pencil-square"></i> Edit</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
